@@ -6,16 +6,20 @@ pnpm install 然后就可以跑起来
 
 ## 1万条数据测试结果
 
-loki 13ms
-idb 172ms
-原生indexedDB  753ms
-dexie 972ms
-localForage 两分钟还没返回, 不考虑
+| 数据库 | 耗时(毫秒) |
+| ---- | ---- |
+| loki | 13 |
+| idb | 172 |
+| 原生indexedDB | 753|
+| dexie | 972 |
+| localForage | 两分钟还没返回, 不考虑 |
 
 ## 10万条数据测试结果
 
-loki 272ms
-idb 5334ms
-原生indexedDB  8687ms
-dexie 10464ms
-localForage 两分钟还没返回, 不考虑
+| 数据库 | 耗时(毫秒) |
+| ---- | ---- |
+| loki | 272 |
+| idb | 5334 |
+| 原生indexedDB | 8687 |
+| dexie | 10464 |
+| localForage | 两分钟还没返回, 不考虑 |
