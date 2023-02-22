@@ -177,6 +177,19 @@ function createTester() {
     });
   }
 
+  function dexieBulkTest(docs) {
+    var collection = []
+    for (var i = 0; i < docs.length; i++) {
+      var doc = docs[i];
+      doc.id = 'doc_' + i;
+      collection.push(doc);
+    }
+
+    return dexieDB.transaction('rw', dexieDB.docs, function () {
+      dexieDB.docs.bulkAdd(collection)
+    });
+  }
+
   function newIdbTest(docs) {
     var promise = Promise.resolve();
 
@@ -293,6 +306,8 @@ function createTester() {
         return localForageWebSQLTest;
       case 'dexie':
         return dexieTest;
+      case 'dexie_bulk':
+        return dexieBulkTest;
       case 'new_idb': 
         return newIdbTest;
       case 'idb':

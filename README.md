@@ -11,7 +11,8 @@ pnpm install 然后就可以跑起来
 | loki | 13 |
 | idb | 172 |
 | 原生indexedDB | 753|
-| dexie | 972 |
+| dexie 单条插入 | 1036 |
+| dexie 批量插入 | 945 |
 | localForage | 两分钟还没返回, 不考虑 |
 
 ## 10万条数据测试结果
@@ -22,4 +23,5 @@ pnpm install 然后就可以跑起来
 | idb | 5334 |
 | 原生indexedDB | 8687 |
 | dexie | 10464 |
+| dexie 批量插入 | 10816 |
 | localForage | 两分钟还没返回, 不考虑 |
