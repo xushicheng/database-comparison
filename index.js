@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var tester = createTester();
   var buttons = document.getElementsByTagName('button');
   var display = document.getElementById('display');
-  var worker = new Worker('worker.js');
+  // var worker = new Worker('worker.js');
 
   function disableButtons(bool) {
     for (var i = 0; i < buttons.length; i++) {
@@ -32,33 +32,33 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  function workerPromise(message) {
-    return new Promise(function (resolve, reject) {
+  // function workerPromise(message) {
+  //   return new Promise(function (resolve, reject) {
 
-      function cleanup() {
-        worker.removeEventListener('message', onSuccess);
-        worker.removeEventListener('error', onError);
-      }
+  //     function cleanup() {
+  //       worker.removeEventListener('message', onSuccess);
+  //       worker.removeEventListener('error', onError);
+  //     }
 
-      function onSuccess(e) {
-        cleanup();
-        if (e.data.error) {
-          reject(e.data.error);
-        } else {
-          resolve(e);
-        }
-      }
+  //     function onSuccess(e) {
+  //       cleanup();
+  //       if (e.data.error) {
+  //         reject(e.data.error);
+  //       } else {
+  //         resolve(e);
+  //       }
+  //     }
 
-      function onError(e) {
-        cleanup();
-        reject(e);
-      }
+  //     function onError(e) {
+  //       cleanup();
+  //       reject(e);
+  //     }
 
-      worker.addEventListener('message', onSuccess);
-      worker.addEventListener('error', onError);
-      worker.postMessage(message);
-    });
-  }
+  //     worker.addEventListener('message', onSuccess);
+  //     worker.addEventListener('error', onError);
+  //     worker.postMessage(message);
+  //   });
+  // }
 
 
   document.getElementById('insertButton').addEventListener('click', function () {

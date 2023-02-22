@@ -1,8 +1,8 @@
 function createTester() {
   'use strict';
 
-  var pouch = new PouchDB('pouch_test');
-  var pouchWebSQL = new PouchDB('pouch_test_websql', {adapter: 'websql'});
+  // var pouch = new PouchDB('pouch_test');
+  // var pouchWebSQL = new PouchDB('pouch_test_websql', {adapter: 'websql'});
   var lokiDB = new loki.Collection('loki_test', {indices: ['id']});
   var dexieDB = new Dexie('dexie_test');
   dexieDB.version(1).stores({docs: '++,id'});
@@ -21,6 +21,12 @@ function createTester() {
       driver: localforage.WEBSQL
     });
   }
+
+  var newIdbPromise = idb.openDB('keyval-store', 1, {
+    upgrade(db) {
+      db.createObjectStore('keyval');
+    },
+  });
 
   function createDoc() {
     return {
@@ -91,37 +97,37 @@ function createTester() {
     }
   }
 
-  function pouchTest(docs) {
-    var promise = Promise.resolve();
-    function addDoc(i) {
-      return doAddDoc;
-      function doAddDoc() {
-        var doc = docs[i];
-        doc._id = 'doc_' + i;
-        return pouch.put(doc);
-      }
-    }
-    for (var i = 0; i < docs.length; i++) {
-      promise = promise.then(addDoc(i));
-    }
-    return promise;
-  }
+  // function pouchTest(docs) {
+  //   var promise = Promise.resolve();
+  //   function addDoc(i) {
+  //     return doAddDoc;
+  //     function doAddDoc() {
+  //       var doc = docs[i];
+  //       doc._id = 'doc_' + i;
+  //       return pouch.put(doc);
+  //     }
+  //   }
+  //   for (var i = 0; i < docs.length; i++) {
+  //     promise = promise.then(addDoc(i));
+  //   }
+  //   return promise;
+  // }
 
-  function pouchWebSQLTest(docs) {
-    var promise = Promise.resolve();
-    function addDoc(i) {
-      return doAddDoc;
-      function doAddDoc() {
-        var doc = docs[i];
-        doc._id = 'doc_' + i;
-        return pouchWebSQL.put(doc);
-      }
-    }
-    for (var i = 0; i < docs.length; i++) {
-      promise = promise.then(addDoc(i));
-    }
-    return promise;
-  }
+  // function pouchWebSQLTest(docs) {
+  //   var promise = Promise.resolve();
+  //   function addDoc(i) {
+  //     return doAddDoc;
+  //     function doAddDoc() {
+  //       var doc = docs[i];
+  //       doc._id = 'doc_' + i;
+  //       return pouchWebSQL.put(doc);
+  //     }
+  //   }
+  //   for (var i = 0; i < docs.length; i++) {
+  //     promise = promise.then(addDoc(i));
+  //   }
+  //   return promise;
+  // }
 
   function lokiTest(docs) {
     for (var i = 0; i < docs.length; i++) {
@@ -169,6 +175,29 @@ function createTester() {
         dexieDB.docs.add(doc);
       }
     });
+  }
+
+  function newIdbTest(docs) {
+    var promise = Promise.resolve();
+
+    promise.then(function () {
+      newIdbPromise.then(function(x) {
+        function addDoc(i) {
+          return doAddDoc;
+    
+          function doAddDoc() {
+            var doc = docs[i];
+            x.put('keyval',  doc, 'doc_' + i);
+          }
+        }
+
+        for (var i = 0; i < docs.length; i++) {
+          addDoc(i)()
+        }
+      })
+    })
+    
+    return promise;
   }
 
   function idbTest(docs) {
@@ -246,15 +275,16 @@ function createTester() {
     }
   }
   function _getTest(db) {
+    console.log(`🚀 ~ file: tester.js:277 ~ _getTest ~ db:`, db);
     switch (db) {
       case 'regularObject':
         return regularObjectTest;
       case 'localStorage':
         return localStorageTest;
-      case 'pouch':
-        return pouchTest;
-      case 'pouchWebSQL':
-        return pouchWebSQLTest;
+      // case 'pouch':
+      //   return pouchTest;
+      // case 'pouchWebSQL':
+      //   return pouchWebSQLTest;
       case 'loki':
         return lokiTest;
       case 'localForage':
@@ -263,6 +293,8 @@ function createTester() {
         return localForageWebSQLTest;
       case 'dexie':
         return dexieTest;
+      case 'new_idb': 
+        return newIdbTest;
       case 'idb':
         return idbTest;
       case 'webSQL':
@@ -330,17 +362,17 @@ function createTester() {
         dexieDB.version(1).stores({ docs: '++,id'});
         dexieDB.open();
       }),
-      pouch.destroy().then(function () {
-        pouch = new PouchDB('pouch_test');
-      }),
-      Promise.resolve().then(function () {
-        if (!pouchWebSQL.adapter) {
-          return Promise.resolve();
-        }
-        return pouchWebSQL.destroy().then(function () {
-          pouchWebSQL = new PouchDB('pouch_test_websql', {adapter: 'websql'});
-        });
-      })
+      // pouch.destroy().then(function () {
+      //   pouch = new PouchDB('pouch_test');
+      // }),
+      // Promise.resolve().then(function () {
+      //   if (!pouchWebSQL.adapter) {
+      //     return Promise.resolve();
+      //   }
+      //   return pouchWebSQL.destroy().then(function () {
+      //     pouchWebSQL = new PouchDB('pouch_test_websql', {adapter: 'websql'});
+      //   });
+      // })
     ];
 
     return Promise.all(promises);
